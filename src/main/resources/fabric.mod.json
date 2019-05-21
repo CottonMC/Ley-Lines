@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+
+  "name": "Ley-Lines",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "MIT",
+  "icon": "assets/arcanum/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "io.github.cottonmc.leylines.main"
+      }
+    ],
+    "client":[
+      {
+        "adapter": "kotlin",
+        "value": "io.github.cottonmc.leylines.ClientInitializer"
+      }
+    ]
+  },
+  "mixins": [
+    "leylines.mixins.json"
+  ],
+
+  "requires": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*",
+    "fabric-language-kotlin": ">=1.3.30"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

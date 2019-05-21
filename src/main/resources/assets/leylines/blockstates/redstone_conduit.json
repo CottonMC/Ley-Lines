@@ -1,0 +1,65 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "leylines:block/redstone_conduit_center"
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "leylines:block/redstone_conduit_side",
+        "x": 270,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "leylines:block/redstone_conduit_side",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "leylines:block/redstone_conduit_side",
+        "x": 90,
+        "y": 90
+
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "leylines:block/redstone_conduit_side",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "up": true
+      },
+      "apply": {
+        "model": "leylines:block/redstone_conduit_side",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "down": true
+      },
+      "apply": {
+        "model": "leylines:block/redstone_conduit_side"
+      }
+    }
+  ]
+}
