@@ -2,8 +2,6 @@ package io.github.cottonmc.leylines.mixin;
 
 import io.github.cottonmc.leylines.attributes.TagAttributesKt;
 import io.github.cottonmc.leylines.attributes.UpgradeContainer;
-import io.github.cottonmc.leylines.blocks.container.Socketable;
-import io.github.cottonmc.leylines.attributes.UpgradeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;

@@ -5,9 +5,6 @@ import io.github.cottonmc.leylines.attributes.UpgradeContainer;
 import io.github.cottonmc.leylines.blocks.container.Socketable;
 import io.github.cottonmc.leylines.inventory.ResizeableInventory;
 import io.github.cottonmc.leylines.Constants;
-import io.github.cottonmc.leylines.attributes.UpgradeContainer;
-import io.github.cottonmc.leylines.blocks.container.Socketable;
-import io.github.cottonmc.leylines.inventory.ResizeableInventory;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.inventory.Inventory;
@@ -23,8 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-
-import static io.github.cottonmc.leylines.Constants.Sockets.ID;
 
 @Mixin(ItemStack.class)
 @Implements(@Interface(iface= Socketable.class,prefix = "leylines_sockets$",unique = true))
