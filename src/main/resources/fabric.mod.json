@@ -6,22 +6,20 @@
   "name": "Ley-Lines",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
-    "Me!"
+    "Frontrider","tree_of_chaos","Haylo_alex"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
 
   "license": "MIT",
-  "icon": "assets/arcanum/icon.png",
+  "icon": "assets/${id}/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
       {
         "adapter": "kotlin",
-        "value": "io.github.cottonmc.leylines.main"
+        "value": "io.github.cottonmc.leylines.Main"
       }
     ],
     "client":[
@@ -32,7 +30,7 @@
     ]
   },
   "mixins": [
-    "leylines.mixins.json"
+    "${id}.mixins.json"
   ],
 
   "requires": {

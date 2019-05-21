@@ -50,7 +50,7 @@ object Main : ModInitializer {
                                 .breakByHand(true)
                                 .build()))
 
-        Registry.register(Registry.ITEM, SocketingTable.id,BlockItem(SOCKETING_TABLE,Item.Settings()))
+        Registry.register(Registry.ITEM, SocketingTable.id,BlockItem(SOCKETING_TABLE,Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
 
     }
 }
