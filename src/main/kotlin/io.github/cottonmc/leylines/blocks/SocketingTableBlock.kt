@@ -14,7 +14,7 @@ import net.minecraft.block.BlockState
 
 
 
-class SocketingTable(settings: Settings) : Block(settings) {
+class SocketingTableBlock(settings: Settings) : Block(settings) {
 
     companion object{
         val id= Identifier(Constants.modid,"soketing_table")

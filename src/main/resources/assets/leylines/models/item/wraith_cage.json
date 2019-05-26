@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "leylines:items/soul_flame_caged",
+    "layer1": "leylines:items/soul_capsule"
+  }
+}

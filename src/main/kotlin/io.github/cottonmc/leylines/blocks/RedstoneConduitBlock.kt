@@ -15,7 +15,7 @@ import net.minecraft.world.BlockView
 import net.minecraft.world.IWorld
 import net.minecraft.world.World
 
-class RedstoneConduit(settings: Settings) : Block(settings) {
+class RedstoneConduitBlock(settings: Settings) : Block(settings) {
 
     companion object States {
         val UP = BooleanProperty.create("up")

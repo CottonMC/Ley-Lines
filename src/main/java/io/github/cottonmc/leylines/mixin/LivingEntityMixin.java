@@ -24,4 +24,7 @@ public abstract class LivingEntityMixin {
         attributeContainer.register(EntityAttributesKt.getDETERIORIATE());
         attributeContainer.register(EntityAttributesKt.getHERCULIAN_STRENGTH());
     }
+
+
+
 }

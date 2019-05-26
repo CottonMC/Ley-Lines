@@ -1,6 +1,6 @@
 package io.github.cottonmc.leylines.client.gui
 
-import io.github.cottonmc.leylines.blocks.container.SocketingTableGuiController
+import io.github.cottonmc.leylines.container.SocketingTableGuiController
 import net.minecraft.entity.player.PlayerEntity
 import io.github.cottonmc.cotton.gui.client.CottonScreen
 
