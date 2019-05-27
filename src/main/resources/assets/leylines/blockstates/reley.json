@@ -4,12 +4,50 @@
       "apply": {
         "model": "leylines:block/wraith"
       }
-    },{
+    },
+    {
       "when": {
         "facing": "down"
       },
       "apply": {
         "model": "leylines:block/reley_base"
+      }
+    },
+    {
+      "when": {
+        "facing": "up"
+      },
+      "apply": {
+        "model": "leylines:block/reley_base",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "leylines:block/reley_base",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "leylines:block/reley_base",
+        "x": -90
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "leylines:block/reley_base",
+        "x": 90,
+        "y": 90
       }
     }
   ]
