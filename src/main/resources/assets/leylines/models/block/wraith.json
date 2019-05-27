@@ -1,0 +1,39 @@
+{
+  "credit": "Made with Blockbench",
+  "textures": {
+    "0": "leylines:soul_flame",
+    "particle": "leylines:soul_flame"
+  },
+  "elements": [
+    {
+      "from": [8, 2, 5],
+      "to": [8, 12, 11],
+      "faces": {
+        "north": {"uv": [0, 0, 1, 10], "texture": "#missing"},
+        "east": {"uv": [11, 1, 5, 11], "texture": "#0"},
+        "south": {"uv": [0, 0, 1, 10], "texture": "#missing"},
+        "west": {"uv": [5, 1, 11, 11], "texture": "#0"},
+        "up": {"uv": [0, 0, 6, 1], "rotation": 90, "texture": "#missing"},
+        "down": {"uv": [0, 0, 6, 1], "rotation": 270, "texture": "#missing"}
+      }
+    },
+    {
+      "from": [5, 2, 8],
+      "to": [11, 12, 8],
+      "faces": {
+        "north": {"uv": [11, 1, 5, 11], "texture": "#0"},
+        "east": {"uv": [0, 0, 1, 10], "texture": "#missing"},
+        "south": {"uv": [5, 1, 11, 11], "texture": "#0"},
+        "west": {"uv": [0, 0, 1, 10], "texture": "#missing"},
+        "up": {"uv": [0, 0, 6, 1], "texture": "#missing"},
+        "down": {"uv": [0, 0, 6, 1], "texture": "#missing"}
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "flame",
+      "children": [0, 1]
+    }
+  ]
+}

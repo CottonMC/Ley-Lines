@@ -1,7 +1,7 @@
 package io.github.cottonmc.leylines.blocks
 
-import WRAITH_CAGE
-import WRAITH_CAGE_EMPTY
+import io.github.cottonmc.leylines.WRAITH_CAGE
+import io.github.cottonmc.leylines.WRAITH_CAGE_EMPTY
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -126,36 +126,31 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
 
         override fun setInvStack(index: Int, stack: ItemStack) {
             val blockState = world.getBlockState(pos)
-            if (index == 0) {
-                if (stack.item == WRAITH_CAGE_EMPTY) {
-                    world.setBlockState(pos, blockState.with(HAS_CAGE, CageState.EMPTY), 3)
-                    world.updateNeighbors(pos, blockState.block)
-                }
+            if (stack.item == WRAITH_CAGE_EMPTY) {
+                world.setBlockState(pos, blockState.with(HAS_CAGE, CageState.EMPTY), 3)
+                world.updateNeighbors(pos, blockState.block)
             }
-            if (index == 1) {
-                if (stack.item == Items.SOUL_SAND && blockState[HAS_CAGE] == CageState.EMPTY) {
-                    if (world.random.nextInt(10) > 6) {
-                        val level = blockState[LEVEL]
-                        if (level < 16) {
-                            world.setBlockState(pos, blockState.with(LEVEL, level + 1), 3)
-                            world.updateNeighbors(pos, blockState.block)
-                        } else {
-                            world.setBlockState(pos, blockState.with(LEVEL, 0).with(HAS_CAGE, CageState.FULL), 3)
-                            world.updateNeighbors(pos, blockState.block)
-                        }
+            if (stack.item == Items.SOUL_SAND && blockState[HAS_CAGE] == CageState.EMPTY) {
+                if (world.random.nextInt(10) > 6) {
+                    val level = blockState[LEVEL]
+                    if (level < 16) {
+                        world.setBlockState(pos, blockState.with(LEVEL, level + 1), 3)
+                        world.updateNeighbors(pos, blockState.block)
+                    } else {
+                        world.setBlockState(pos, blockState.with(LEVEL, 0).with(HAS_CAGE, CageState.FULL), 3)
+                        world.updateNeighbors(pos, blockState.block)
                     }
-
                 }
+
             }
 
         }
 
         override fun removeInvStack(p0: Int): ItemStack {
-            if (p0 == 0)
-                return ItemStack.EMPTY
 
             val blockState = world.getBlockState(pos)
-
+            if (p0 == 1)
+                return ItemStack.EMPTY
 
             return when (blockState[HAS_CAGE]) {
                 CageState.EMPTY -> {
@@ -181,7 +176,7 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
 
         override fun getInvAvailableSlots(p0: Direction): IntArray {
             return when (p0) {
-                Direction.UP -> intArrayOf(0)
+                Direction.UP -> intArrayOf(0, 1)
                 Direction.DOWN -> intArrayOf(0)
                 else -> intArrayOf()
             }
@@ -202,7 +197,8 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
         }
 
         override fun takeInvStack(p0: Int, p1: Int): ItemStack {
-            if (p0 == 1)
+
+            if(p0 == 1)
                 return ItemStack.EMPTY
 
             val blockState = world.getBlockState(pos)
@@ -242,7 +238,7 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
             if (direction == Direction.UP) {
                 return when {
                     //soul sand goes into slot 1.
-                    stack.item == Items.SOUL_SAND ->  blockState[HAS_CAGE] == CageState.EMPTY
+                    stack.item == Items.SOUL_SAND -> blockState[HAS_CAGE] == CageState.EMPTY && world.getBlockState(pos.down()).block == Blocks.FIRE
                     //the cage is in slot 0, we can only insert if there is no cage.
                     stack.item == WRAITH_CAGE_EMPTY -> blockState[HAS_CAGE] == CageState.NO_CAGE
                     else -> false

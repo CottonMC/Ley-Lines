@@ -11,6 +11,9 @@ object Constants {
     @JvmField
     var logger = ModLogger(modid)
 
+    @JvmField
+    val socketingTableIdentifier= Identifier(Constants.modid,"soketing_table")
+
     /**
      * Stores the tags that mark specific socket counts.
      * */
@@ -20,7 +23,6 @@ object Constants {
         val ID = Identifier(modid, "sockets")
         @JvmField
         var socketId = Constants.Sockets.ID.toString()
-
 
         @JvmField
         val ONE_SOCKET_TAG = Identifier(modid, "socket_count_1")

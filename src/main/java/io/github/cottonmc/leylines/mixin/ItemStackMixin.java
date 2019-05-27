@@ -9,6 +9,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -28,10 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static io.github.cottonmc.leylines.Constants.Sockets.socketId;
 
@@ -50,6 +48,9 @@ public abstract class ItemStackMixin //implements Socketable
     @Shadow
     public abstract Item getItem();
 
+    @Shadow
+    public abstract void addAttributeModifier(String string_1, EntityAttributeModifier entityAttributeModifier_1, EquipmentSlot equipmentSlot_1);
+
     @Inject(
             at = @At("RETURN"),
             method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V"
@@ -64,7 +65,8 @@ public abstract class ItemStackMixin //implements Socketable
             method = "getAttributeModifiers"
     )
     private void attributes(EquipmentSlot equipmentSlot_1, CallbackInfoReturnable<Multimap<String, EntityAttributeModifier>> cir) {
-        Multimap<String, EntityAttributeModifier> returnValue = cir.getReturnValue();
+        /*Multimap<String, EntityAttributeModifier> returnValue = cir.getReturnValue();
+        Item item = getItem();
 
         //if the cahce needs to be rebuild, we rebuild it.
         if (socketAttributeCache.isEmpty()) {
@@ -74,23 +76,45 @@ public abstract class ItemStackMixin //implements Socketable
                 for (Tag socketItem : tagList) {
                     String[] rawId = socketItem.asString().split(":");
                     try {
-                        socketAttributeCache.addAll(TagAttributesKt.getAttributesForItem(new Identifier(rawId[0], rawId[1])));
+                        List<EntityAttributeModifier> attributesForItem = TagAttributesKt.getAttributesForItem(new Identifier(rawId[0], rawId[1]));
+                        if (item instanceof ArmorItem) {
+                            if (((ArmorItem) item).getSlotType() == equipmentSlot_1) {
+                                socketAttributeCache.addAll(attributesForItem);
+                            }
+                        } else {
+                            if (equipmentSlot_1 == EquipmentSlot.MAINHAND) {
+                                socketAttributeCache.addAll(attributesForItem);
+                            }
+                        }
+
                     } catch (NullPointerException ignored) {
 
                     }
                 }
             }
+        }
 
-            for (EntityAttributeModifier entityAttributeModifier : socketAttributeCache) {
-
+        if (item instanceof ArmorItem) {
+            if (((ArmorItem) item).getSlotType() == equipmentSlot_1) {
+                for (EntityAttributeModifier entityAttributeModifier : socketAttributeCache) {
+                    Collection<EntityAttributeModifier> entityAttributeModifiers = returnValue.get(entityAttributeModifier.getName());
+                    double amount =0.0;
+                    for (EntityAttributeModifier attributeModifier : entityAttributeModifiers) {
+                        amount = attributeModifier.getAmount();
+                    }
+                    returnValue.put(entityAttributeModifier.getName(), entityAttributeModifier);
+                }
+            }
+        } else {
+            if (equipmentSlot_1 == EquipmentSlot.MAINHAND) {
+                for (EntityAttributeModifier entityAttributeModifier : socketAttributeCache) {
+                    returnValue.put(entityAttributeModifier.getName(), entityAttributeModifier);
+                }
             }
         }
-
-        for (EntityAttributeModifier entityAttributeModifier : socketAttributeCache) {
-            returnValue.put(entityAttributeModifier.getName(), entityAttributeModifier);
-        }
-
+*/
     }
+
     @Inject(
             at = @At("RETURN"),
             method = "getTooltipText"

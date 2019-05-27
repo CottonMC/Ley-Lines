@@ -1,6 +1,5 @@
 package io.github.cottonmc.leylines
 
-import io.github.cottonmc.leylines.blocks.SocketingTableBlock
 import io.github.cottonmc.leylines.client.gui.SocketingTableGui
 import io.github.cottonmc.leylines.container.SocketingTableGuiController
 import net.fabricmc.api.ClientModInitializer
@@ -10,7 +9,7 @@ import net.minecraft.container.BlockContext
 
 object ClientInitializer : ClientModInitializer {
     override fun onInitializeClient() {
-        ScreenProviderRegistry.INSTANCE.registerFactory(SocketingTableBlock.id) { syncId, identifier, player, buf ->
+        ScreenProviderRegistry.INSTANCE.registerFactory(Constants.socketingTableIdentifier) { syncId, identifier, player, buf ->
             SocketingTableGui(
                     SocketingTableGuiController(
                             syncId,

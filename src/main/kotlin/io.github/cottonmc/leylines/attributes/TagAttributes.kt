@@ -1,10 +1,13 @@
 package io.github.cottonmc.leylines.attributes
 
 import io.github.cottonmc.leylines.Constants.modid
+import net.minecraft.entity.EquipmentSlot
+import net.minecraft.entity.attribute.EntityAttributeInstance
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation.ADDITION
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation.MULTIPLY_TOTAL
 import net.minecraft.entity.attribute.EntityAttributes
+import net.minecraft.item.ArmorItem
 import net.minecraft.item.Item
 import net.minecraft.tag.ItemTags
 import net.minecraft.util.Identifier
@@ -20,6 +23,10 @@ fun getAttributesForItem(item: @NotNull Item): MutableList<EntityAttributeModifi
             attributes.add(attributeMap[tag]?.invoke()!!)
     }
 
+    val slot =when(item){
+        is ArmorItem-> item.slotType
+        else->EquipmentSlot.MAINHAND
+    }
     return attributes
 }
 

@@ -1,0 +1,16 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "leylines:block/wraith"
+      }
+    },{
+      "when": {
+        "facing": "down"
+      },
+      "apply": {
+        "model": "leylines:block/reley_base"
+      }
+    }
+  ]
+}

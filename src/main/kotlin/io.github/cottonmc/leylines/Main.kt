@@ -1,8 +1,9 @@
 package io.github.cottonmc.leylines
 
-import WRAITH_CAGE
-import WRAITH_CAGE_EMPTY
 import io.github.cottonmc.leylines.Constants.modid
+import io.github.cottonmc.leylines.Constants.socketingTableIdentifier
+import io.github.cottonmc.leylines.blocks.CraftingGuiBlock
+import io.github.cottonmc.leylines.blocks.ReLayBlock
 import io.github.cottonmc.leylines.blocks.RedstoneConduitBlock
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.block.FabricBlockSettings
@@ -19,7 +20,6 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.ExtendedBlockView
-import io.github.cottonmc.leylines.blocks.SocketingTableBlock
 import io.github.cottonmc.leylines.blocks.WraithFabricatorBlock
 import io.github.cottonmc.leylines.container.SocketingTableGuiController
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry
@@ -53,7 +53,7 @@ object Main : ModInitializer {
             return@BlockColorProvider RedstoneWireBlock.getWireColor(power)
         }, REDSTONE_CONDUIT)
 
-        ContainerProviderRegistry.INSTANCE.registerFactory(SocketingTableBlock.id) { syncId, _, player, buf ->
+        ContainerProviderRegistry.INSTANCE.registerFactory(socketingTableIdentifier) { syncId, _, player, buf ->
             SocketingTableGuiController(
                     syncId,
                     player.inventory,
@@ -62,16 +62,27 @@ object Main : ModInitializer {
         }
 
         SOCKETING_TABLE =
-                Registry.register(Registry.BLOCK, SocketingTableBlock.id, SocketingTableBlock(
+                Registry.register(Registry.BLOCK, socketingTableIdentifier, CraftingGuiBlock(
                         FabricBlockSettings
                                 .copy(Blocks.CRAFTING_TABLE)
                                 .breakByHand(true)
-                                .build()))
+                                .build(),
+                                socketingTableIdentifier
+                        ))
+
+        RELEY =   Registry.register(Registry.BLOCK, Identifier(modid,"reley"), ReLayBlock(
+                FabricBlockSettings
+                        .copy(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE)
+                        .breakByHand(true)
+                        .build()
+        ))
+
+        Registry.register(Registry.ITEM,  Identifier(modid,"reley"), BlockItem(RELEY, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
 
         WRAITH_CAGE = Item(Item.Settings().itemGroup(ItemGroup.MISC))
         WRAITH_CAGE_EMPTY = Item(Item.Settings().itemGroup(ItemGroup.MISC))
 
-        Registry.register(Registry.ITEM, SocketingTableBlock.id, BlockItem(SOCKETING_TABLE, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
+        Registry.register(Registry.ITEM, socketingTableIdentifier, BlockItem(SOCKETING_TABLE, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
 
         Registry.register(Registry.ITEM, Identifier(modid, "wraith_cage_empty"), WRAITH_CAGE_EMPTY)
         Registry.register(Registry.ITEM, Identifier(modid, "wraith_cage"), WRAITH_CAGE)

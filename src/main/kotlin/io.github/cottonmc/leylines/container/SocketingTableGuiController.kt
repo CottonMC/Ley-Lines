@@ -13,13 +13,14 @@ import io.github.cottonmc.leylines.attributes.getAttributesForItem
 import io.github.cottonmc.leylines.inventory.*
 import net.minecraft.container.*
 import net.minecraft.entity.EquipmentSlot
+import net.minecraft.entity.attribute.EntityAttributeModifier
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.recipe.RecipeType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ArmorItem
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.tag.ItemTags
 import net.minecraft.util.math.BlockPos
@@ -135,7 +136,8 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
             val result = input.copy()
             result.amount = 1
 
-            val socketCount = getSocketCount(result.item)
+            val resultItem = result.item
+            val socketCount = getSocketCount(resultItem)
 
             val tag = result.orCreateTag
             if (tag.containsKey(socketId)) {
@@ -146,7 +148,37 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
 
             inv.onRangeExcludeEmpty(1..6) {
                 val identifier = Registry.ITEM.getId(it.item)
+                //adds the socketed item to the stack, and if we succeed, than proceeds with the craft.
                 if ((result as Socketable).addtoSocket(identifier)) {
+                    val equipmentSlot = when (resultItem) {
+                        is ArmorItem -> resultItem.slotType
+                        else -> EquipmentSlot.MAINHAND
+                    }
+
+                    //if the item has no custom attributes, than we add the default modifiers to the custom attributes, so we can't loose them.
+                    if (!result.orCreateTag.containsKey("AttributeModifiers")) {
+                        resultItem.getAttributeModifiers(equipmentSlot)
+                                .asMap()
+                                .map {
+                                    Pair(it.key, it.value.first())
+                                }.forEach { mod ->
+                                    val amount = when (mod.first) {
+                                        EntityAttributes.ATTACK_DAMAGE.id -> mod.second.amount + 1
+                                        EntityAttributes.ATTACK_SPEED.id -> mod.second.amount + 4
+                                        EntityAttributes.ARMOR.id-> mod.second.amount
+                                        else -> return@forEach
+                                    }
+
+                                    result.addAttributeModifier(mod.first, EntityAttributeModifier(mod.first, amount, mod.second.operation), equipmentSlot)
+                                }
+                    }
+
+                    //we add all of the expected modifiers to the item.
+                    val attributesForItem = getAttributesForItem(it.item)
+                    attributesForItem.forEach { mod ->
+                        result.addAttributeModifier(mod.name, mod, equipmentSlot)
+                    }
+
                     if (consume)
                         it.amount--
                 } else {
