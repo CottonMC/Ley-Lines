@@ -1,0 +1,91 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "y": 180,
+        "uvlock": true
+      },
+      "when": {
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "x": 90,
+        "y": 180,
+        "uvlock": true
+      },
+      "when": {
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "x": 180,
+        "y": 180,
+        "uvlock": true
+      },
+      "when": {
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "x": 270,
+        "y": 180,
+        "uvlock": true
+      },
+      "when": {
+        "east": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "uvlock": true
+      },
+      "when": {
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "x": 90,
+        "uvlock": true
+      },
+      "when": {
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "x": 180,
+        "uvlock": true
+      },
+      "when": {
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_edge",
+        "x": 270,
+        "uvlock": true
+      },
+      "when": {
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "leylines:block/connected_block_test_center"
+      }
+    }
+  ]
+}

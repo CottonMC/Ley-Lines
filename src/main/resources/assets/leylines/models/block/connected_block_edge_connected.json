@@ -1,0 +1,6 @@
+{
+  "parent": "leylines:block/connected_block_edge",
+  "textures": {
+    "texture": "minecraft:block/cobblestone"
+  }
+}

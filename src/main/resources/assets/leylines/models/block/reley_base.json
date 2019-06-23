@@ -1,6 +1,26 @@
 {
-  "parent": "block/rail_flat",
-  "textures": {
-    "rail": "leylines:block/reley_base"
-  }
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "leylines:block/reley_base",
+		"1": "leylines:block/reley_signal_base",
+		"particle": "leylines:block/reley_base"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 0, 16],
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [0, 1, 0],
+			"to": [16, 1, 16],
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1","tintindex": 0},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#1","tintindex": 0}
+			}
+		}
+	]
 }

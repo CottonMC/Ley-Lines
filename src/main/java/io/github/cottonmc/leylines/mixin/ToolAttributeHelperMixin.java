@@ -1,7 +1,7 @@
 package io.github.cottonmc.leylines.mixin;
 
 import com.google.common.collect.Multimap;
-import io.github.cottonmc.leylines.attributes.UpgradeContainer;
+import io.github.cottonmc.leylines.upgrades.UpgradeContainer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.Item;

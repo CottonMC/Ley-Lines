@@ -2,9 +2,8 @@ package io.github.cottonmc.leylines
 
 import io.github.cottonmc.leylines.Constants.modid
 import io.github.cottonmc.leylines.Constants.socketingTableIdentifier
-import io.github.cottonmc.leylines.blocks.CraftingGuiBlock
-import io.github.cottonmc.leylines.blocks.ReLayBlock
-import io.github.cottonmc.leylines.blocks.RedstoneConduitBlock
+import io.github.cottonmc.leylines.Constants.wraithInserterIdentifier
+import io.github.cottonmc.leylines.blocks.*
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.fabricmc.fabric.api.client.render.ColorProviderRegistry
@@ -20,9 +19,11 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.ExtendedBlockView
-import io.github.cottonmc.leylines.blocks.WraithFabricatorBlock
 import io.github.cottonmc.leylines.container.SocketingTableGuiController
+import io.github.cottonmc.leylines.container.WraithInserterGuiController
+import io.github.cottonmc.leylines.enchantment.*
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry
+import net.minecraft.block.Block
 import net.minecraft.container.BlockContext
 
 
@@ -38,7 +39,7 @@ object Main : ModInitializer {
         WRAITH_FABRICATOR =
                 Registry.register(Registry.BLOCK, Identifier(modid, "wraith_fabricator"), WraithFabricatorBlock(
                         FabricBlockSettings
-                                .copy(Blocks.COMPOSTER)
+                                .copy(Blocks.CAULDRON)
                                 .breakByHand(true)
                                 .build()))
 
@@ -67,17 +68,37 @@ object Main : ModInitializer {
                                 .copy(Blocks.CRAFTING_TABLE)
                                 .breakByHand(true)
                                 .build(),
-                                socketingTableIdentifier
-                        ))
+                        socketingTableIdentifier
+                ))
 
-        RELEY =   Registry.register(Registry.BLOCK, Identifier(modid,"reley"), ReLayBlock(
+        RELEY = Registry.register(Registry.BLOCK, Identifier(modid, "reley"), ReLayBlock(
                 FabricBlockSettings
                         .copy(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE)
                         .breakByHand(true)
+                        .lightLevel(15)
                         .build()
         ))
 
-        Registry.register(Registry.ITEM,  Identifier(modid,"reley"), BlockItem(RELEY, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
+        COOLED_LAVA = Registry.register(Registry.BLOCK, Identifier(modid, "cooled_lava"), CooledLavaBlock())
+
+        WRAITH_INSERTER = Registry.register(Registry.BLOCK, wraithInserterIdentifier, CraftingGuiBlock(
+                FabricBlockSettings
+                        .copy(Blocks.CRAFTING_TABLE)
+                        .breakByHand(true)
+                        .build(),
+                wraithInserterIdentifier
+        ))
+        Registry.register(Registry.ITEM, wraithInserterIdentifier, BlockItem(WRAITH_INSERTER, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
+
+        ContainerProviderRegistry.INSTANCE.registerFactory(wraithInserterIdentifier) { syncId, _, player, buf ->
+            WraithInserterGuiController(
+                    syncId,
+                    player.inventory,
+                    BlockContext.create(player.world, buf.readBlockPos())
+            )
+        }
+
+        Registry.register(Registry.ITEM, Identifier(modid, "reley"), BlockItem(RELEY, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
 
         WRAITH_CAGE = Item(Item.Settings().itemGroup(ItemGroup.MISC))
         WRAITH_CAGE_EMPTY = Item(Item.Settings().itemGroup(ItemGroup.MISC))
@@ -87,5 +108,17 @@ object Main : ModInitializer {
         Registry.register(Registry.ITEM, Identifier(modid, "wraith_cage_empty"), WRAITH_CAGE_EMPTY)
         Registry.register(Registry.ITEM, Identifier(modid, "wraith_cage"), WRAITH_CAGE)
 
+        FLAMEWALKER = registerEnchantment(Identifier(modid, "flamewalker"), FlameWalkerEnchant())
+        TOES_OF_THE_VOID = registerEnchantment(Identifier(modid, "toesofthevoid"), ToesOfTheVoid())
+        DETERIORATE = registerEnchantment(Identifier(modid, "deteriorate"), Deteriorate())
+
+        CONNECTED_BLOCK_TEST = Registry.register(Registry.BLOCK, Identifier(modid,"connected_block_test"), ConnectedBlock(
+        FabricBlockSettings
+                .copy(Blocks.CRAFTING_TABLE)
+                .build()
+        ))
+        Registry.register(Registry.ITEM, Identifier(modid,"connected_block_test"), BlockItem(CONNECTED_BLOCK_TEST, Item.Settings().itemGroup(ItemGroup.DECORATIONS)))
+
     }
+
 }

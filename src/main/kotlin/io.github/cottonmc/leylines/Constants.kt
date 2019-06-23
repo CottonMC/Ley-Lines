@@ -12,7 +12,11 @@ object Constants {
     var logger = ModLogger(modid)
 
     @JvmField
-    val socketingTableIdentifier= Identifier(Constants.modid,"soketing_table")
+    val socketingTableIdentifier= Identifier(modid,"soketing_table")
+
+
+    @JvmField
+    val wraithInserterIdentifier = Identifier(modid,"wraith_inserter")
 
     /**
      * Stores the tags that mark specific socket counts.
@@ -22,7 +26,7 @@ object Constants {
         @JvmField
         val ID = Identifier(modid, "sockets")
         @JvmField
-        var socketId = Constants.Sockets.ID.toString()
+        var tagID = Constants.Sockets.ID.toString()
 
         @JvmField
         val ONE_SOCKET_TAG = Identifier(modid, "socket_count_1")
@@ -55,5 +59,12 @@ object Constants {
                 return socketCounts.indexOf(tag)+1
             return 0
         }
+    }
+
+    object WraithUpgrade{
+        @JvmField
+        val ID = Identifier(modid, "wraith")
+        @JvmField
+        var tagID = Constants.WraithUpgrade.ID.toString()
     }
 }

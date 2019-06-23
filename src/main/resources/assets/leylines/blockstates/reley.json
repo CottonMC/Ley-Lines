@@ -47,7 +47,17 @@
       "apply": {
         "model": "leylines:block/reley_base",
         "x": 90,
-        "y": 90
+        "y": -90
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "leylines:block/reley_base",
+        "x": -90,
+        "y": -90
       }
     }
   ]

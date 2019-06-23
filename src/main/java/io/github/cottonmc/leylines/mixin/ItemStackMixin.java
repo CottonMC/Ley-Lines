@@ -1,15 +1,11 @@
 package io.github.cottonmc.leylines.mixin;
 
-import com.google.common.collect.Multimap;
-import io.github.cottonmc.leylines.attributes.TagAttributesKt;
 import io.github.cottonmc.leylines.container.Socketable;
 import io.github.cottonmc.leylines.Constants;
 import io.github.cottonmc.leylines.container.SocketableKt;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +13,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -26,18 +23,21 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
-import static io.github.cottonmc.leylines.Constants.Sockets.socketId;
+import static io.github.cottonmc.leylines.Constants.Sockets.tagID;
 
+/**
+ * added methods to manage a few data on stacks.
+ * <p>
+ * The irreplacable part is the added lore.
+ */
 @Mixin(ItemStack.class)
 @Implements(@Interface(iface = Socketable.class, prefix = "leylines_sockets$", unique = true))
 public abstract class ItemStackMixin //implements Socketable
 {
-    private List<EntityAttributeModifier> socketAttributeCache = new LinkedList<>();
 
     @Shadow
     private CompoundTag tag;
@@ -48,73 +48,6 @@ public abstract class ItemStackMixin //implements Socketable
     @Shadow
     public abstract Item getItem();
 
-    @Shadow
-    public abstract void addAttributeModifier(String string_1, EntityAttributeModifier entityAttributeModifier_1, EquipmentSlot equipmentSlot_1);
-
-    @Inject(
-            at = @At("RETURN"),
-            method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V"
-    )
-    private void init(CompoundTag compoundTag_1, CallbackInfo ci) {
-
-    }
-
-
-    @Inject(
-            at = @At("RETURN"),
-            method = "getAttributeModifiers"
-    )
-    private void attributes(EquipmentSlot equipmentSlot_1, CallbackInfoReturnable<Multimap<String, EntityAttributeModifier>> cir) {
-        /*Multimap<String, EntityAttributeModifier> returnValue = cir.getReturnValue();
-        Item item = getItem();
-
-        //if the cahce needs to be rebuild, we rebuild it.
-        if (socketAttributeCache.isEmpty()) {
-            CompoundTag tag = getOrCreateTag();
-            if (tag.containsKey(Constants.Sockets.ID.toString())) {
-                ListTag tagList = tag.getList(socketId, 8);
-                for (Tag socketItem : tagList) {
-                    String[] rawId = socketItem.asString().split(":");
-                    try {
-                        List<EntityAttributeModifier> attributesForItem = TagAttributesKt.getAttributesForItem(new Identifier(rawId[0], rawId[1]));
-                        if (item instanceof ArmorItem) {
-                            if (((ArmorItem) item).getSlotType() == equipmentSlot_1) {
-                                socketAttributeCache.addAll(attributesForItem);
-                            }
-                        } else {
-                            if (equipmentSlot_1 == EquipmentSlot.MAINHAND) {
-                                socketAttributeCache.addAll(attributesForItem);
-                            }
-                        }
-
-                    } catch (NullPointerException ignored) {
-
-                    }
-                }
-            }
-        }
-
-        if (item instanceof ArmorItem) {
-            if (((ArmorItem) item).getSlotType() == equipmentSlot_1) {
-                for (EntityAttributeModifier entityAttributeModifier : socketAttributeCache) {
-                    Collection<EntityAttributeModifier> entityAttributeModifiers = returnValue.get(entityAttributeModifier.getName());
-                    double amount =0.0;
-                    for (EntityAttributeModifier attributeModifier : entityAttributeModifiers) {
-                        amount = attributeModifier.getAmount();
-                    }
-                    returnValue.put(entityAttributeModifier.getName(), entityAttributeModifier);
-                }
-            }
-        } else {
-            if (equipmentSlot_1 == EquipmentSlot.MAINHAND) {
-                for (EntityAttributeModifier entityAttributeModifier : socketAttributeCache) {
-                    returnValue.put(entityAttributeModifier.getName(), entityAttributeModifier);
-                }
-            }
-        }
-*/
-    }
-
     @Inject(
             at = @At("RETURN"),
             method = "getTooltipText"
@@ -122,14 +55,25 @@ public abstract class ItemStackMixin //implements Socketable
     private void tooltip(PlayerEntity playerEntity_1, TooltipContext tooltipContext, CallbackInfoReturnable<List<Component>> cir) {
         List<Component> componentList = cir.getReturnValue();
 
+        //add the socket info to the lore
         CompoundTag tag = getOrCreateTag();
-        if (tag.containsKey(Constants.Sockets.ID.toString())) {
-            ListTag tagList = tag.getList(socketId, 8);
+        if (tag.containsKey(Constants.Sockets.tagID)) {
+            ListTag tagList = tag.getList(tagID, 8);
             componentList.add(new TranslatableComponent(Constants.modid + ".tooltip.sockets"));
             for (Tag socketItem : tagList) {
                 String[] rawId = socketItem.asString().split(":");
                 componentList.add(new TranslatableComponent("item." + rawId[0] + "." + rawId[1]));
             }
+        }
+        //add wraith info to the lore
+        if (tag.containsKey(Constants.WraithUpgrade.tagID)) {
+            CompoundTag wraith = tag.getCompound(Constants.WraithUpgrade.tagID);
+            componentList.add(new TranslatableComponent(Constants.modid + ".tooltip.wraith"));
+
+            long exp = wraith.getLong("exp");
+            int capValue = wraith.getInt("capValue") * 100;
+
+            componentList.add(new TextComponent("lv:" + exp + "/" + capValue));
         }
 
     }
@@ -138,23 +82,20 @@ public abstract class ItemStackMixin //implements Socketable
         return !tag.getList(Constants.Sockets.ID.toString(), 8).isEmpty();
     }
 
-
     public boolean leylines_sockets$addtoSocket(@NotNull Identifier identifier) {
         CompoundTag tag = getOrCreateTag();
-        if (tag.containsKey(socketId)) {
+        if (tag.containsKey(tagID)) {
             int socketCount = SocketableKt.getSocketCount(getItem());
 
-            ListTag socketList = tag.getList(socketId, 8);
+            ListTag socketList = tag.getList(tagID, 8);
             if (socketList.size() < socketCount) {
                 socketList.add(new StringTag(identifier.toString()));
-                socketAttributeCache.clear();
                 return true;
             }
         } else {
             ListTag socketList = new ListTag();
             socketList.add(new StringTag(identifier.toString()));
-            tag.put(socketId, socketList);
-            socketAttributeCache.clear();
+            tag.put(tagID, socketList);
 
             return true;
         }
@@ -164,10 +105,10 @@ public abstract class ItemStackMixin //implements Socketable
 
     @NotNull
     public List<Identifier> leylines_sockets$getSocketItems() {
-        if (!this.tag.containsKey(socketId)) {
+        if (!this.tag.containsKey(tagID)) {
             return Collections.emptyList();
         }
-        ListTag list = tag.getList(socketId, 8);
+        ListTag list = tag.getList(tagID, 8);
 
         ArrayList<Identifier> result = new ArrayList<>();
 
@@ -182,14 +123,13 @@ public abstract class ItemStackMixin //implements Socketable
     public boolean leylines_sockets$removeFromSocket(@NotNull Identifier identifier) {
 
         CompoundTag tag = getOrCreateTag();
-        if (tag.containsKey(socketId)) {
+        if (tag.containsKey(tagID)) {
 
-            ListTag socketList = tag.getList(socketId, 8);
+            ListTag socketList = tag.getList(tagID, 8);
             for (int i = 0; i < socketList.size(); i++) {
                 String string = socketList.getString(i);
                 if (string.equals(identifier.toString())) {
                     socketList.remove(i);
-                    socketAttributeCache.clear();
 
                     return true;
                 }

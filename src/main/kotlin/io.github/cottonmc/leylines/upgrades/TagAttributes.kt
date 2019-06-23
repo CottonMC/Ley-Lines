@@ -1,8 +1,7 @@
-package io.github.cottonmc.leylines.attributes
+package io.github.cottonmc.leylines.upgrades
 
 import io.github.cottonmc.leylines.Constants.modid
 import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.attribute.EntityAttributeInstance
 import net.minecraft.entity.attribute.EntityAttributeModifier
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation.ADDITION
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation.MULTIPLY_TOTAL
@@ -39,12 +38,6 @@ interface UpgradeContainer {
 }
 
 val attributeMap = mapOf(
-         Pair(Identifier(modid, "deterioriate_mod"),
-                 {EntityAttributeModifier(
-                        DETERIORIATE.id,
-                        1.0,
-                        ADDITION)}
-        ),
         Pair(Identifier(modid, "attack_mod"),
                 {EntityAttributeModifier(
                         EntityAttributes.ATTACK_DAMAGE.id

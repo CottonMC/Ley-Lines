@@ -1,0 +1,21 @@
+{
+  "credit": "Made with Blockbench",
+  "textures": {
+    "texture": "minecraft:block/stone"
+  },
+  "elements": [
+    {
+      "from": [0, 3, 0],
+      "to": [2, 14, 2],
+      "color": 7,
+      "faces": {
+        "north": {"uv": [14, 2, 16, 13], "texture": "#texture", "cullface": "north"},
+        "east": {"uv": [14, 2, 16, 13], "texture": "#texture", "cullface": "east"},
+        "south": {"uv": [0, 2, 2, 13], "texture": "#texture", "cullface": "south"},
+        "west": {"uv": [0, 2, 2, 13], "texture": "#texture", "cullface": "west"},
+        "up": {"uv": [0, 0, 2, 2], "texture": "#texture", "cullface": "up"},
+        "down": {"uv": [0, 14, 2, 16], "texture": "#texture", "cullface": "down"}
+      }
+    }
+  ]
+}

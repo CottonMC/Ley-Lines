@@ -1,15 +1,15 @@
 package io.github.cottonmc.leylines.container
 
 import io.github.cottonmc.leylines.Constants
-import io.github.cottonmc.leylines.attributes.attributeMap
+import io.github.cottonmc.leylines.upgrades.attributeMap
 import io.github.cottonmc.leylines.client.gui.DynamicTextComponent
 import io.github.cottonmc.cotton.gui.CottonScreenController
 import io.github.cottonmc.cotton.gui.widget.WItemSlot
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.logging.ModLogger
-import io.github.cottonmc.leylines.Constants.Sockets.socketId
-import io.github.cottonmc.leylines.attributes.getAttributesForItem
+import io.github.cottonmc.leylines.Constants.Sockets.tagID
+import io.github.cottonmc.leylines.upgrades.getAttributesForItem
 import io.github.cottonmc.leylines.inventory.*
 import net.minecraft.container.*
 import net.minecraft.entity.EquipmentSlot
@@ -35,18 +35,18 @@ import net.minecraft.world.World
  * The amount of sockets available is displayed bellow the input slot.
  * */
 @Suppress("CAST_NEVER_SUCCEEDS")
-class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory, val context: BlockContext) : CottonScreenController(RecipeType.SMELTING, syncId, playerInventory), WatchedInventory.InventoryListener {
+class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory, private val context: BlockContext) : CottonScreenController(RecipeType.SMELTING, syncId, playerInventory), WatchedInventory.InventoryListener {
 
 
     companion object {
         var logger = ModLogger(Constants.modid, "socketing table")
     }
 
-    val inv = InventoryBase(7)
-    val watchedInput = WatchedInventory(inv, this)
-    val output = InventoryBase(1)
-    val socketDisplay = DynamicTextComponent("")
-    val outputSlot: WItemSlot
+    private val inv = InventoryBase(7)
+    private val watchedInput = WatchedInventory(inv, this)
+    private val output = InventoryBase(1)
+    private val socketDisplay = DynamicTextComponent("")
+    private val outputSlot: WItemSlot
 
     init {
 
@@ -59,7 +59,7 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
         val socketCounterMonitor = WLabel(socketDisplay, 1)
 
         rootPanel.add(socketCounterMonitor, 2, 1)
-        outputSlot = WItemSlot.of(output, 0)
+        outputSlot = WItemSlot(output, 0,1,1,true,true)
         rootPanel.add(inputSlot, 1, 1)
         rootPanel.add(WItemSlot.of(watchedInput, 1), 3, 1)
         rootPanel.add(WItemSlot.of(watchedInput, 2), 4, 1)
@@ -72,14 +72,15 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
         rootPanel.add(this.createPlayerInventoryPanel(), 0, 4)
 
         rootPanel.validate(this)
-
-        //addListener(SocketListener(this))
     }
 
     override fun canInsertIntoSlot(slot: Slot): Boolean {
         return slot.inventory != output
     }
 
+    override fun onContentChanged(inventory_1: Inventory?) {
+
+    }
     /**
      * When inserting into slot 0, we check if it is marked as a socketable item.
      * when inserting into slot 7, we prevent it.
@@ -110,7 +111,7 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
                 inv[0].amount--
                 this.getSlot(7).stack = result
                 //return result
-                player.inventory.markDirty();
+                player.inventory.markDirty()
             }
         }
         return super.onSlotClick(slotNumber, button, action, player)
@@ -125,7 +126,6 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
     }
 
     private fun getResult(consume: Boolean): ItemStack {
-        //logger.infoBig("changed")
         val input = inv[0]
 
         if (input.isEmpty) {
@@ -140,14 +140,15 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
             val socketCount = getSocketCount(resultItem)
 
             val tag = result.orCreateTag
-            if (tag.containsKey(socketId)) {
-                val socketsUsed = tag.getList(socketId, 8).size
+            if (tag.containsKey(tagID)) {
+                val socketsUsed = tag.getList(tagID, 8).size
                 socketDisplay.text = (socketCount - socketsUsed).toString()
             } else
                 socketDisplay.text = socketCount.toString()
 
-            inv.onRangeExcludeEmpty(1..6) {
-                val identifier = Registry.ITEM.getId(it.item)
+            //walk through all inventory slots, and add them to the sockets.
+            inv.onRangeExcludeEmpty(1..6) { itemStack ->
+                val identifier = Registry.ITEM.getId(itemStack.item)
                 //adds the socketed item to the stack, and if we succeed, than proceeds with the craft.
                 if ((result as Socketable).addtoSocket(identifier)) {
                     val equipmentSlot = when (resultItem) {
@@ -168,19 +169,18 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
                                         EntityAttributes.ARMOR.id-> mod.second.amount
                                         else -> return@forEach
                                     }
-
                                     result.addAttributeModifier(mod.first, EntityAttributeModifier(mod.first, amount, mod.second.operation), equipmentSlot)
                                 }
                     }
 
                     //we add all of the expected modifiers to the item.
-                    val attributesForItem = getAttributesForItem(it.item)
+                    val attributesForItem = getAttributesForItem(itemStack.item)
                     attributesForItem.forEach { mod ->
                         result.addAttributeModifier(mod.name, mod, equipmentSlot)
                     }
 
                     if (consume)
-                        it.amount--
+                        itemStack.amount--
                 } else {
                     return@onRangeExcludeEmpty
                 }
@@ -192,7 +192,7 @@ class SocketingTableGuiController(syncId: Int, playerInventory: PlayerInventory,
 
     override fun watch(inv: Inventory) {
 
-        context.run { world: World?, blockPos: BlockPos? ->
+        context.run { _: World?, _: BlockPos? ->
             this.getSlot(7).stack = getResult(false)
         }
     }

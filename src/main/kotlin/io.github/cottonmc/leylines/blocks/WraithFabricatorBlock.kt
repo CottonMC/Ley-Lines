@@ -20,8 +20,10 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.IWorld
 import net.minecraft.world.World
+import java.util.*
 
 class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProvider {
+    val random = Random()
 
     enum class CageState : StringIdentifiable {
         NO_CAGE {
@@ -83,6 +85,11 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
         if (stackInHand.item == WRAITH_CAGE_EMPTY && blockState_1.get(HAS_CAGE) == CageState.NO_CAGE) {
             stackInHand.amount--
             world_1.setBlockState(blockPos_1, blockState_1.with(HAS_CAGE, CageState.EMPTY))
+            return true
+        }
+        if (stackInHand.item == Items.SOUL_SAND) {
+            stackInHand.amount--
+            insertSand(world_1,blockState_1,blockPos_1)
         }
 
         return false
@@ -96,12 +103,26 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
     }
 
     override fun getInventory(p0: BlockState, p1: IWorld, p2: BlockPos): SidedInventory {
-        return FabricatorInventory(p1, p2)
+        return FabricatorInventory(p1, p2,this)
+    }
+
+    fun insertSand(world: IWorld, blockState: BlockState, pos: BlockPos) {
+        if (random.nextInt(10) > 6) {
+            val level = blockState[LEVEL]
+            if (level < 16) {
+                world.setBlockState(pos, blockState.with(LEVEL, level + 1), 3)
+                world.updateNeighbors(pos, blockState.block)
+            } else {
+                world.setBlockState(pos, blockState.with(LEVEL, 0).with(HAS_CAGE, CageState.FULL), 3)
+                world.updateNeighbors(pos, blockState.block)
+            }
+        }
     }
 
     class FabricatorInventory(
-            val world: IWorld,
-            val pos: BlockPos
+            private val world: IWorld,
+            private val pos: BlockPos,
+            private val block: WraithFabricatorBlock
     ) : SidedInventory {
         override fun getInvStack(p0: Int): ItemStack {
             return if (p0 == 0) {
@@ -131,16 +152,7 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
                 world.updateNeighbors(pos, blockState.block)
             }
             if (stack.item == Items.SOUL_SAND && blockState[HAS_CAGE] == CageState.EMPTY) {
-                if (world.random.nextInt(10) > 6) {
-                    val level = blockState[LEVEL]
-                    if (level < 16) {
-                        world.setBlockState(pos, blockState.with(LEVEL, level + 1), 3)
-                        world.updateNeighbors(pos, blockState.block)
-                    } else {
-                        world.setBlockState(pos, blockState.with(LEVEL, 0).with(HAS_CAGE, CageState.FULL), 3)
-                        world.updateNeighbors(pos, blockState.block)
-                    }
-                }
+               block.insertSand(world,blockState,pos)
 
             }
 
@@ -198,7 +210,7 @@ class WraithFabricatorBlock(settings: Settings) : Block(settings), InventoryProv
 
         override fun takeInvStack(p0: Int, p1: Int): ItemStack {
 
-            if(p0 == 1)
+            if (p0 == 1)
                 return ItemStack.EMPTY
 
             val blockState = world.getBlockState(pos)
